@@ -52,12 +52,13 @@ export function PDFViewerPanel() {
   const yScale = targetRatio / actualRatio;
 
   return (
-    <div className="w-full h-full bg-[#0a0f1c] bg-[radial-gradient(ellipse_80%_80%_at_50%_-20%,rgba(29,78,216,0.1),rgba(255,255,255,0))] flex items-center justify-center overflow-auto p-8 relative" ref={containerRef}>
+    <div className="w-full h-full bg-[#0a0f1c] bg-[radial-gradient(ellipse_80%_80%_at_50%_-20%,rgba(29,78,216,0.1),rgba(255,255,255,0))] overflow-auto relative" ref={containerRef}>
       {pdfUrl ? (
-        <div 
-          className="shadow-[0_0_50px_rgba(0,0,0,0.5)] rounded-md relative bg-white overflow-hidden ring-1 ring-slate-800"
-          style={{ width: renderWidth, height: renderHeight }}
-        >
+        <div className="w-full min-h-full py-8 flex justify-center items-start">
+          <div 
+            className="shadow-[0_0_50px_rgba(0,0,0,0.5)] rounded-md relative bg-white overflow-hidden ring-1 ring-slate-800"
+            style={{ width: renderWidth, height: renderHeight }}
+          >
           <Document
             file={pdfUrl}
             className="w-full h-full"
@@ -93,6 +94,7 @@ export function PDFViewerPanel() {
               }}
             />
           )}
+          </div>
         </div>
       ) : (
         <div className="w-full h-full flex items-center justify-center text-slate-500 absolute top-0 left-0">
