@@ -166,7 +166,7 @@ Provide ONLY the raw JSON object in your response, with no markdown formatting o
 });
 
 // Catch-all route for React (SPA)
-app.get("*", (req, res) => {
+app.get(/.*/, (req, res) => {
   res.sendFile(path.join(distPath, "index.html"));
 });
 
