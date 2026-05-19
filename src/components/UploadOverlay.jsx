@@ -81,66 +81,117 @@ export function UploadOverlay() {
 
   if (isExtracting) {
     return (
-      <div className="absolute inset-0 z-50 flex flex-col items-center justify-center bg-background/95 backdrop-blur-sm">
-        <Loader2 className="w-16 h-16 text-primary animate-spin mb-4" />
-        <h2 className="text-2xl font-semibold text-foreground mb-2">Analyzing Document...</h2>
-        <p className="text-muted-foreground text-center max-w-md">
-          Our AI is scanning the PDF to identify form fields, checkboxes, and their exact positions.
-        </p>
-      </div>
+      <motion.div 
+        initial={{ opacity: 0 }} 
+        animate={{ opacity: 1 }} 
+        className="absolute inset-0 z-50 flex flex-col items-center justify-center bg-black/80 backdrop-blur-md"
+      >
+        <motion.div 
+          animate={{ scale: [0.95, 1.05, 0.95] }} 
+          transition={{ duration: 2, repeat: Infinity, ease: "easeInOut" }}
+          className="relative flex items-center justify-center mb-8"
+        >
+          <div className="absolute inset-0 bg-blue-500/30 blur-2xl rounded-full" />
+          <Loader2 className="w-20 h-20 text-blue-400 animate-spin relative z-10" />
+        </motion.div>
+        
+        <motion.h2 
+          initial={{ y: 10, opacity: 0 }} 
+          animate={{ y: 0, opacity: 1 }} 
+          transition={{ delay: 0.2 }}
+          className="text-3xl font-bold text-white mb-3 tracking-tight"
+        >
+          Analyzing Document...
+        </motion.h2>
+        
+        <motion.p 
+          initial={{ y: 10, opacity: 0 }} 
+          animate={{ y: 0, opacity: 1 }} 
+          transition={{ delay: 0.4 }}
+          className="text-blue-200/70 text-center max-w-md text-lg"
+        >
+          Our neural engine is scanning the PDF layout to extract interactive form fields with pixel-perfect precision.
+        </motion.p>
+      </motion.div>
     );
   }
 
   return (
-    <div className="absolute inset-0 z-50 flex flex-col items-center justify-center bg-background p-6">
-      <div className="max-w-xl w-full">
-        <div className="text-center mb-8">
-          <h1 className="text-4xl font-bold tracking-tight text-foreground mb-4">
-            Upload PDF Form
+    <div className="absolute inset-0 z-50 flex flex-col items-center justify-center bg-[#0a0f1c] bg-[radial-gradient(ellipse_80%_80%_at_50%_-20%,rgba(29,78,216,0.15),rgba(255,255,255,0))] p-6">
+      <motion.div 
+        initial={{ opacity: 0, y: 20 }}
+        animate={{ opacity: 1, y: 0 }}
+        transition={{ duration: 0.6, ease: "easeOut" }}
+        className="max-w-2xl w-full"
+      >
+        <div className="text-center mb-12">
+          <h1 className="text-5xl font-extrabold tracking-tight text-transparent bg-clip-text bg-gradient-to-r from-blue-400 to-indigo-300 mb-6 drop-shadow-sm">
+            Intelligent PDF Extraction
           </h1>
-          <p className="text-lg text-muted-foreground">
-            Upload any PDF document. Our AI will automatically extract all input fields and generate an interactive form.
+          <p className="text-xl text-slate-400 font-light leading-relaxed max-w-xl mx-auto">
+            Drop your bank form below. Our AI vision model will instantly digitize it into an interactive schema.
           </p>
         </div>
 
-        <div
-          className={`relative flex flex-col items-center justify-center p-12 border-2 border-dashed rounded-xl transition-all duration-200 ease-in-out ${dragActive
-              ? "border-primary bg-primary/5 scale-[1.02]"
-              : "border-border hover:border-primary/50 hover:bg-accent/50"
-            }`}
+        <motion.div
+          whileHover={{ scale: 1.01 }}
+          whileTap={{ scale: 0.99 }}
+          className={`relative flex flex-col items-center justify-center p-16 rounded-2xl transition-all duration-300 ease-in-out cursor-pointer overflow-hidden ${
+            dragActive
+              ? "border-blue-500 bg-blue-500/10 shadow-[0_0_40px_rgba(59,130,246,0.3)]"
+              : "border-slate-800 bg-slate-900/50 hover:bg-slate-800/80 hover:border-blue-500/50 hover:shadow-[0_0_30px_rgba(59,130,246,0.15)]"
+          } border border-dashed`}
+          style={{ backdropFilter: "blur(12px)" }}
           onDragEnter={handleDrag}
           onDragLeave={handleDrag}
           onDragOver={handleDrag}
           onDrop={handleDrop}
         >
+          {/* Animated background glow for drag active state */}
+          {dragActive && (
+             <motion.div 
+               layoutId="glow"
+               className="absolute inset-0 bg-blue-500/5 blur-3xl rounded-2xl" 
+             />
+          )}
+
           <input
             type="file"
-            className="absolute inset-0 w-full h-full opacity-0 cursor-pointer"
+            className="absolute inset-0 w-full h-full opacity-0 cursor-pointer z-20"
             accept="application/pdf"
             onChange={handleChange}
           />
-          <div className="flex flex-col items-center justify-center space-y-4 text-center">
-            <div className="p-4 bg-primary/10 rounded-full">
-              <UploadCloud className="w-12 h-12 text-primary" />
-            </div>
-            <div>
-              <p className="text-xl font-medium text-foreground">
-                Drag & drop your PDF here
+          
+          <div className="flex flex-col items-center justify-center space-y-6 text-center relative z-10 pointer-events-none">
+            <motion.div 
+              animate={{ y: dragActive ? -5 : 0 }}
+              className={`p-5 rounded-full transition-colors duration-300 ${dragActive ? 'bg-blue-500/20 shadow-[0_0_20px_rgba(59,130,246,0.4)]' : 'bg-slate-800 shadow-inner'}`}
+            >
+              <UploadCloud className={`w-14 h-14 ${dragActive ? 'text-blue-400' : 'text-slate-400'}`} />
+            </motion.div>
+            
+            <div className="space-y-2">
+              <p className="text-2xl font-semibold text-slate-200">
+                {dragActive ? "Drop to digitize..." : "Drag & drop your PDF here"}
               </p>
-              <p className="text-sm text-muted-foreground mt-1">
-                or click to browse from your computer
+              <p className="text-base text-slate-500">
+                or click anywhere to browse your files
               </p>
             </div>
           </div>
-        </div>
+        </motion.div>
 
         {error && (
-          <div className="mt-6 flex items-start space-x-3 p-4 bg-destructive/10 text-destructive rounded-lg border border-destructive/20">
-            <AlertCircle className="w-5 h-5 shrink-0 mt-0.5" />
-            <p className="text-sm">{error}</p>
-          </div>
+          <motion.div 
+            initial={{ opacity: 0, y: -10 }}
+            animate={{ opacity: 1, y: 0 }}
+            className="mt-8 flex items-center space-x-3 p-4 bg-red-500/10 text-red-400 rounded-xl border border-red-500/20 backdrop-blur-sm shadow-lg shadow-red-500/5"
+          >
+            <AlertCircle className="w-6 h-6 shrink-0" />
+            <p className="text-sm font-medium">{error}</p>
+          </motion.div>
         )}
-      </div>
+      </motion.div>
     </div>
   );
 }
