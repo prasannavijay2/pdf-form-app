@@ -1,4 +1,5 @@
 import React, { useCallback, useState } from "react";
+import { motion } from "framer-motion";
 import { UploadCloud, File, AlertCircle, Loader2 } from "lucide-react";
 import { useFormStore } from "../store/useFormStore";
 import { mockSchema } from "../data/schema";

@@ -52,10 +52,10 @@ export function PDFViewerPanel() {
   const yScale = targetRatio / actualRatio;
 
   return (
-    <div className="w-full h-full bg-slate-100 flex justify-center overflow-auto p-4 relative" ref={containerRef}>
+    <div className="w-full h-full bg-[#0a0f1c] bg-[radial-gradient(ellipse_80%_80%_at_50%_-20%,rgba(29,78,216,0.1),rgba(255,255,255,0))] flex items-center justify-center overflow-auto p-8 relative" ref={containerRef}>
       {pdfUrl ? (
         <div 
-          className="shadow-xl rounded-md relative bg-white overflow-hidden"
+          className="shadow-[0_0_50px_rgba(0,0,0,0.5)] rounded-md relative bg-white overflow-hidden ring-1 ring-slate-800"
           style={{ width: renderWidth, height: renderHeight }}
         >
           <Document
@@ -75,27 +75,27 @@ export function PDFViewerPanel() {
           {focusedField && (
             <motion.div
               key={`focus-${focusedField.id}`}
-              initial={{ opacity: 0 }}
-              animate={{ opacity: 1 }}
-              transition={{ duration: 0.15 }}
+              initial={{ opacity: 0, scale: 0.95 }}
+              animate={{ opacity: 1, scale: 1 }}
+              transition={{ type: "spring", stiffness: 300, damping: 25 }}
               style={{
                 position: "absolute",
                 left: `${parseFloat(focusedField.x || 0)}%`,
                 top: `${parseFloat(focusedField.y || 0) * yScale}%`,
                 width: `${parseFloat(focusedField.width || 0)}%`,
                 height: `${parseFloat(focusedField.height || 0) * yScale}%`,
-                border: "2px solid rgb(59, 130, 246)",
-                backgroundColor: "rgba(59, 130, 246, 0.12)",
-                boxShadow: "0 0 8px rgba(59, 130, 246, 0.4)",
+                border: "2.5px solid rgb(59, 130, 246)",
+                backgroundColor: "rgba(59, 130, 246, 0.15)",
+                boxShadow: "0 0 15px rgba(59, 130, 246, 0.6), inset 0 0 8px rgba(59, 130, 246, 0.3)",
                 zIndex: 10,
                 pointerEvents: "none",
-                borderRadius: "3px",
+                borderRadius: "4px",
               }}
             />
           )}
         </div>
       ) : (
-        <div className="w-full h-full flex items-center justify-center text-muted-foreground absolute top-0 left-0 rounded-md bg-white">
+        <div className="w-full h-full flex items-center justify-center text-slate-500 absolute top-0 left-0">
           No PDF Loaded
         </div>
       )}
