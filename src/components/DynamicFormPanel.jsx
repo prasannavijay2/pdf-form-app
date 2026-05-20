@@ -1,4 +1,4 @@
-import React, { useMemo, useEffect } from "react";
+import React, { useMemo, useEffect, useState } from "react";
 import { useForm, Controller } from "react-hook-form";
 import { zodResolver } from "@hookform/resolvers/zod";
 import * as z from "zod";
@@ -21,6 +21,10 @@ import { motion } from "framer-motion";
 export function DynamicFormPanel() {
   const setFocusedFieldId = useFormStore((state) => state.setFocusedFieldId);
   const schemaFields = useFormStore((state) => state.schema);
+  const setPdfFile = useFormStore((state) => state.setPdfFile);
+  const setSchema = useFormStore((state) => state.setSchema);
+
+  const [submittedData, setSubmittedData] = useState(null);
 
   const { dynamicSchema, defaultValues } = useMemo(() => {
     const schemaObj = {};
@@ -72,7 +76,7 @@ export function DynamicFormPanel() {
 
   const onSubmit = (data) => {
     console.log("Form Submitted:", data);
-    alert("Form submitted successfully!");
+    setSubmittedData(data);
   };
 
   const handleFocus = (id) => {
@@ -82,6 +86,70 @@ export function DynamicFormPanel() {
   const handleBlur = () => {
     setFocusedFieldId(null);
   };
+
+  if (submittedData) {
+    return (
+      <motion.div 
+        initial={{ opacity: 0, scale: 0.98 }}
+        animate={{ opacity: 1, scale: 1 }}
+        transition={{ type: "spring", stiffness: 300, damping: 25 }}
+        className="h-full bg-[#0d1326] overflow-y-auto border-l border-slate-800/60 p-8 flex flex-col justify-between"
+      >
+        <div className="space-y-6">
+          <div className="flex items-center space-x-4">
+            <div className="w-12 h-12 bg-green-500/10 rounded-full flex items-center justify-center border border-green-500/20 shadow-[0_0_15px_rgba(34,197,94,0.2)]">
+              <svg className="w-6 h-6 text-green-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M5 13l4 4L19 7" />
+              </svg>
+            </div>
+            <div>
+              <h2 className="text-2xl font-bold text-white">Extraction Confirmed</h2>
+              <p className="text-sm text-slate-400 font-light">Form data has been successfully saved and verified.</p>
+            </div>
+          </div>
+
+          <div className="bg-slate-900/40 border border-slate-800/85 rounded-xl p-6 space-y-4 max-h-[50vh] overflow-y-auto custom-scrollbar">
+            <h3 className="text-sm font-semibold text-slate-400 uppercase tracking-wider">Summary of Saved Data</h3>
+            <div className="grid grid-cols-1 gap-3">
+              {Object.entries(submittedData).map(([key, val]) => {
+                const fieldDef = schemaFields.find(f => f.id === key);
+                const label = fieldDef ? fieldDef.label : key;
+                if (val === "" || val === null || val === undefined) return null;
+                return (
+                  <div key={key} className="border-b border-slate-800/40 pb-2">
+                    <span className="text-xs text-slate-500 block">{label}</span>
+                    <span className="text-sm text-slate-200 font-medium">
+                      {typeof val === 'boolean' ? (val ? 'Checked' : 'Unchecked') : String(val)}
+                    </span>
+                  </div>
+                );
+              })}
+            </div>
+          </div>
+        </div>
+
+        <div className="pt-6 space-y-3">
+          <Button 
+            onClick={() => {
+              setPdfFile(null);
+              setSchema([]);
+              setSubmittedData(null);
+            }}
+            className="w-full h-12 bg-blue-600 hover:bg-blue-500 text-white font-semibold rounded-xl shadow-[0_0_20px_rgba(37,99,235,0.3)] transition-all duration-300 border border-blue-500/50"
+          >
+            Digitize Another Document
+          </Button>
+          <Button 
+            variant="outline"
+            onClick={() => setSubmittedData(null)}
+            className="w-full h-12 bg-transparent hover:bg-slate-800/50 border border-slate-800 text-slate-300 hover:text-white rounded-xl"
+          >
+            Go Back & Edit
+          </Button>
+        </div>
+      </motion.div>
+    );
+  }
 
   if (!schemaFields || schemaFields.length === 0) {
     return (
