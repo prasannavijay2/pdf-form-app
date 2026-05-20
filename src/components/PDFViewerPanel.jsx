@@ -51,6 +51,23 @@ export function PDFViewerPanel() {
   const targetRatio = 1.4142;
   const yScale = targetRatio / actualRatio;
 
+  // Smooth auto-scroll the PDF container to the focused field location
+  useEffect(() => {
+    if (focusedField && containerRef.current && pageSize) {
+      const targetTopPercentage = parseFloat(focusedField.y || 0) * yScale;
+      const targetTopPixels = (targetTopPercentage / 100) * renderHeight;
+      const containerHeight = containerRef.current.clientHeight;
+      
+      // Calculate scroll position to center the highlight box in the viewport
+      const scrollPosition = targetTopPixels - (containerHeight / 2) + (parseFloat(focusedField.height || 0) * yScale / 2) + 32;
+      
+      containerRef.current.scrollTo({
+        top: Math.max(0, scrollPosition),
+        behavior: "smooth"
+      });
+    }
+  }, [focusedFieldId, renderHeight, yScale, pageSize, focusedField]);
+
   return (
     <div className="w-full h-full bg-[#0a0f1c] bg-[radial-gradient(ellipse_80%_80%_at_50%_-20%,rgba(29,78,216,0.1),rgba(255,255,255,0))] overflow-auto relative" ref={containerRef}>
       {pdfUrl ? (
